@@ -4,9 +4,12 @@ import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 
+final mainUrl = 'https://simpsons.fox-fan.tv/';
+
 Future<void> main(List<String> arguments) async {
   final urls = [
     'https://simpsons.fox-fan.tv/comixs.php?id=1',
+    'https://simpsons.fox-fan.tv/comixs.php?id=2',
   ];
 
 
@@ -46,7 +49,7 @@ Future<void> getComics(
   String documentDir,
   String index,
 ) async {
-  final uri = 'https://simpsons.fox-fan.tv/$url&str=1'.replaceAll('#mark', '');
+  final uri = '$mainUrl$url&str=1'.replaceAll('#mark', '');
 
   print('GET comics $uri');
   final comics = await http.get(Uri.parse(uri));
@@ -62,7 +65,7 @@ Future<void> getComics(
 
     for (var i = 1; i < comicsPages.children.length; i++) {
       final page = await getPage(
-        'https://simpsons.fox-fan.tv/' +
+        mainUrl +
             comicsPages.children[i].attributes['href']!,
         documentDirectory,
         '${i + 1}',
@@ -90,7 +93,7 @@ Future<void> getPage(
     final imageElement = doc.getElementsByTagName('img')[3];
     final image = await http.get(
       Uri.parse(
-          'https://simpsons.fox-fan.tv/${imageElement.attributes['src']!}'),
+          '$mainUrl${imageElement.attributes['src']!}'),
     );
 
    if(image.statusCode == 200){
