@@ -12,7 +12,6 @@ Future<void> main(List<String> arguments) async {
     'https://simpsons.fox-fan.tv/comixs.php?id=2',
   ];
 
-
   for (var i = 0; i < urls.length; i++) {
     print('GET Comics list page ${i + 1}/${urls.length}');
     final uri = urls[i];
@@ -30,12 +29,11 @@ Future<void> main(List<String> arguments) async {
 
       print("Count of comics ${comics.length}");
 
-
-      for (int i = 0; i < comics.length;i++) {
+      for (int i = 0; i < comics.length; i++) {
         await getComics(
           comics[i].children.first.attributes['href']!,
           documentDirectory,
-          (i+1).toString(),
+          (i + 1).toString(),
         );
       }
     } else {
@@ -61,12 +59,11 @@ Future<void> getComics(
 
     final documentDirectory = documentDir + '/$index';
 
-    final firstPage = await getPage(uri, documentDirectory, '1');
+    await getPage(uri, documentDirectory, '1');
 
     for (var i = 1; i < comicsPages.children.length; i++) {
-      final page = await getPage(
-        mainUrl +
-            comicsPages.children[i].attributes['href']!,
+      await getPage(
+        mainUrl + comicsPages.children[i].attributes['href']!,
         documentDirectory,
         '${i + 1}',
       );
@@ -92,22 +89,20 @@ Future<void> getPage(
 
     final imageElement = doc.getElementsByTagName('img')[3];
     final image = await http.get(
-      Uri.parse(
-          '$mainUrl${imageElement.attributes['src']!}'),
+      Uri.parse('$mainUrl${imageElement.attributes['src']!}'),
     );
 
-   if(image.statusCode == 200){
+    if (image.statusCode == 200) {
       final file = File(
-      join(dir, '$index.jpg'),
-    );
+        join(dir, '$index.jpg'),
+      );
 
-    await file.create(recursive: true);
+      await file.create(recursive: true);
 
-    file.writeAsBytesSync(image.bodyBytes);
-   }else{
-    print('Error with image');
-
-   }
+      file.writeAsBytesSync(image.bodyBytes);
+    } else {
+      print('Error with image');
+    }
   } else {
     print('Error with page');
   }
